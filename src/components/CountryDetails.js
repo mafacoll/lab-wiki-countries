@@ -1,40 +1,38 @@
-import React, {useEffect, useState} from 'react'
-import { useParams } from 'react-router'
-import axios from 'axios'
-
-function CountryDetails() {
-
-    const {cca3} =useParams()
-    const [detail, setDetail] =useState(null)
-
-    useEffect(()=>{
+import React, {useEffect, useState} from 'react';
+import { useParams } from 'react-router';
+import axios from 'axios';
+import {Link} from 'react-router-dom';
+function CountryDetail() {
+    const {cca3} = useParams();
+    const [detail, setDetail] = useState(null);
+    useEffect(() => {
         async function getData(){
-            let response = await axios.get(`https://restcountries.com/v3.1/alpha/${cca3}`)   
-            const {flags, name, capital, area, borders} = response.data
-            let country ={
+            let response = await axios.get(`https://restcountries.com/v3.1/alpha/${cca3}`)
+            const {flags, name, capital, area, borders} = response.data[0]
+            let country = {
+                cca3: cca3,
                 flag: flags.svg,
                 name: name.common,
-                capital:capital,
+                capital: capital[0],
                 area: area,
-                borders: borders
+                borders: borders,
             }
+            console.log(country)
             setDetail(country)
         }
         getData()
     }, [cca3])
-
-
+    if (!detail) {
+        return <p>Loading...</p>;
+      }
     return (
-         <div>
-         <h1> Country detail </h1>
-             <img src ={detail.image} />
-             <h2>{detail.name}</h2>
-             <p>Capital {detail.capital}</p>
-             <p>Borders {detail.borders}</p>
-             <p>Area {detail.area}</p>
-
-         </div>
-     )
+        <div>
+            <img src={detail.flag} alt="flag" />
+            <h1> {detail.name} </h1>
+            <p>Capital {detail.capital}</p>
+            <p>Area {detail.area}</p>
+            <p>Borders {detail.borders} <br/></p>
+        </div>
+    )
 }
-
-export default CountryDetails
+export default CountryDetail
